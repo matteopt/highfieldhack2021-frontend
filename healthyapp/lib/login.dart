@@ -13,12 +13,10 @@ class _LoginPageState extends State<LoginPage> {
   final _usernameController = TextEditingController();
   final _passwordFocusNode = FocusNode();
   final _passwordController = TextEditingController();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomAppBar(
         child: Container(
@@ -98,10 +96,9 @@ class _LoginPageState extends State<LoginPage> {
                 color: Colors.blue,
                 onPressed: () {
                   if (_usernameController.text.isEmpty || _usernameController.text.isEmpty) {
-                    _showToast(context);
+                    _showAlertDialog("Please complete all fields");
                   } else {
-                    print(_usernameController.text);
-                    print(_passwordController.text);
+
                   }
                 },
                 elevation: 5,
@@ -122,8 +119,25 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-  void _showToast(BuildContext context) {
-    final snackBar = SnackBar(content: Text("Error"),);
-    _scaffoldKey.currentState.showSnackBar(snackBar); 
+  void _showAlertDialog(String message) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+         title: Text('Error'),
+        content: Container(
+          child: Text(message),
+        ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
