@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:healthyapp/register.dart';
+import 'package:healthyapp/login.dart';
 
-
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
 
   final _usernameFocusNode = FocusNode();
   final _usernameController = TextEditingController();
   final _passwordFocusNode = FocusNode();
   final _passwordController = TextEditingController();
-  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final _emailController = TextEditingController();
+  final _emailFocusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
       resizeToAvoidBottomInset: false,
       bottomNavigationBar: BottomAppBar(
         child: Container(
@@ -26,13 +25,13 @@ class _LoginPageState extends State<LoginPage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("I'm a new user. ", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+              Text("I'm already a member. ", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
               GestureDetector(
-                child: Text("Sign up.", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.blue),),
+                child: Text("Sign in.", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.blue),),
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pop(
                     context,
-                    MaterialPageRoute(builder: (context) => RegisterPage()),
+                    MaterialPageRoute(builder: (context) => LoginPage()),
                   );
                 }
               )
@@ -49,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Welcome,",
+              "Create Account,",
               style: TextStyle(
                 fontWeight: FontWeight.w600,
                 fontSize: 30,
@@ -57,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             Text(
-              "Sign in to Healthy App!",
+              "Sign up to get started!",
               style: TextStyle(
                 fontWeight: FontWeight.w400,
                 fontSize: 25,
@@ -66,6 +65,18 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(
               height: 130,
+            ),
+            TextFormField(
+              focusNode: _emailFocusNode,
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: "Email",
+                contentPadding: EdgeInsets.fromLTRB(30,20,30,20),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), borderSide: BorderSide(color: Colors.grey)),
+              ),
+            ),
+            SizedBox(
+              height: 10,
             ),
             TextFormField(
               focusNode: _usernameFocusNode,
@@ -96,14 +107,7 @@ class _LoginPageState extends State<LoginPage> {
               width: double.infinity,
               child: RaisedButton(
                 color: Colors.blue,
-                onPressed: () {
-                  if (_usernameController.text.isEmpty || _usernameController.text.isEmpty) {
-                    _showToast(context);
-                  } else {
-                    print(_usernameController.text);
-                    print(_passwordController.text);
-                  }
-                },
+                onPressed: () {},
                 elevation: 5,
                 child: Text(
                   "LOGIN",
@@ -121,9 +125,6 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
-  }
-  void _showToast(BuildContext context) {
-    final snackBar = SnackBar(content: Text("Error"),);
-    _scaffoldKey.currentState.showSnackBar(snackBar); 
+    
   }
 }
