@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 class FriendRequest extends StatelessWidget {
 
-  FriendRequest({Key key, @required this.refreshCallback});
+  FriendRequest({Key key, @required this.refreshCallback, @required this.myOwn});
 
   final VoidCallback refreshCallback;
+  final bool myOwn;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +33,7 @@ class FriendRequest extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              if (myOwn)
               SizedBox(
                 width: 40,
                 height: 40,
@@ -43,6 +45,13 @@ class FriendRequest extends StatelessWidget {
                   child: Icon(Icons.check, color: Colors.white,),
                   color: Colors.blue,
                   padding: EdgeInsets.all(5),
+                ),
+              ),
+              if (!myOwn)
+              Text(
+                "PENDING",
+                style: TextStyle(
+                  color: Colors.black45
                 ),
               ),
               SizedBox(width: 10,),
@@ -62,6 +71,46 @@ class FriendRequest extends StatelessWidget {
                 ),
               )
             ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class FriendTile extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 75,
+      color: Colors.white,
+      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+            CircleAvatar(
+              radius: 25,
+              backgroundColor: Colors.blue,
+              backgroundImage: NetworkImage("https://yt3.ggpht.com/EdjnobpzppDl5pSVU2s2AUIiFS0qBfT8Jdodw-FHMhugJK5zmzWDLkpqDVtpnaLSP66M5F8nqINImLKGtQ=s900-nd-c-c0xffffffff-rj-k-no"),
+            ),
+            SizedBox(width: 10,),
+            Text("69HEALTHYDOGE69", style: TextStyle(fontWeight: FontWeight.w600)),
+            ],
+          ),
+          FlatButton(
+            onPressed: () {},
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30))),
+            child: Text(
+              "CHALLENGE",
+              style: TextStyle(
+                color: Colors.blue
+              ),
+            ),
           )
         ],
       ),
@@ -124,8 +173,15 @@ class _SocialPageState extends State<SocialPage> {
                     if (index < 3)
                       return Column(
                         children: <Widget>[
-                          FriendRequest(refreshCallback: refresh,),
-                          if (index < 2)
+                          FriendRequest(refreshCallback: refresh, myOwn: true,),
+                          Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
+                        ],
+                      );
+                    if (index >= 3 && index < 5)
+                      return Column(
+                        children: <Widget>[
+                          FriendRequest(refreshCallback: refresh, myOwn: false,),
+                          if (index < 4)
                             Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
                         ],
                       );
@@ -152,6 +208,22 @@ class _SocialPageState extends State<SocialPage> {
                       )
                     ],
                   ),
+                ),
+              ),
+
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    if (index < 3)
+                      return Column(
+                        children: <Widget>[
+                          FriendTile(),
+                          if (index < 2)
+                            Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
+                        ],
+                      );
+                    return null;
+                  }
                 ),
               ),
 
