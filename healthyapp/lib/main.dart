@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthyapp/home.dart';
 import 'package:healthyapp/login.dart';
 
 void main() {
@@ -16,7 +17,7 @@ class HealthyApp extends StatelessWidget {
           backgroundColor: Colors.white,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: LoginPage()
+        home: HomePage()
       );
   }
 }
