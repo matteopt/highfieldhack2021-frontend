@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:healthyapp/home.dart';
+import 'package:healthyapp/leaderboard.dart';
 import 'package:healthyapp/login.dart';
+import 'package:healthyapp/progress.dart';
 
 void main() {
   runApp(HealthyApp());
@@ -17,7 +19,7 @@ class HealthyApp extends StatelessWidget {
           backgroundColor: Colors.white,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: HomePage()
+        home: LeaderboardPage()
       );
   }
 }
