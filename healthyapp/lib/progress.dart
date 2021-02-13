@@ -151,15 +151,15 @@ class _TaskCardState extends State<TaskCard> {
                   children: <Widget>[
                     Icon(Icons.people),
                     SizedBox(width: 15,),
-                    CircleAvatar(backgroundImage: NetworkImage("https://i.redd.it/3h830ttao8341.jpg"),),
+                    CircleAvatar(backgroundImage: NetworkImage("https://i.redd.it/3h830ttao8341.jpg")),
                     SizedBox(width: 7,),
-                    CircleAvatar(backgroundImage: NetworkImage("https://i.redd.it/kruwv92y42911.jpg"),),
+                    CircleAvatar(backgroundImage: NetworkImage("https://i.redd.it/kruwv92y42911.jpg")),
                     SizedBox(width: 7,),
-                    CircleAvatar(backgroundImage: NetworkImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5I-LyW9aEufGed1suUqzi6eoGmm0KlsUu1w&usqp=CAU"),),
+                    CircleAvatar(backgroundImage: NetworkImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS5I-LyW9aEufGed1suUqzi6eoGmm0KlsUu1w&usqp=CAU")),
                     SizedBox(width: 7,),
-                    CircleAvatar(backgroundImage: NetworkImage("https://i.redd.it/zsit5ydyfxr21.jpg"),),
+                    CircleAvatar(backgroundImage: NetworkImage("https://i.redd.it/zsit5ydyfxr21.jpg")),
                     SizedBox(width: 7,),
-                    CircleAvatar(backgroundImage: NetworkImage("https://i.pinimg.com/564x/0c/88/c5/0c88c5b8f75c901e5d04141301f7741a.jpg"),)
+                    CircleAvatar(backgroundImage: NetworkImage("https://i.pinimg.com/564x/0c/88/c5/0c88c5b8f75c901e5d04141301f7741a.jpg")),
                   ],
                 ),
               )

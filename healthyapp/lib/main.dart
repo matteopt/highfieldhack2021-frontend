@@ -17,7 +17,7 @@ class HealthyApp extends StatelessWidget {
           backgroundColor: Colors.white,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: HomePage()
+        home: LoginPage()
       );
   }
 }
