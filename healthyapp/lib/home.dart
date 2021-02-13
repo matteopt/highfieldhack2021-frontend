@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthyapp/navbar.dart';
+import 'package:healthyapp/progress.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -10,7 +11,7 @@ class _HomePageState extends State<HomePage> {
   
   int _index = 0;
   List<Widget> _pages = [
-    Container(color: Colors.blue),
+    ProgressPage(),
     Container(color: Colors.white),
   ];
 
