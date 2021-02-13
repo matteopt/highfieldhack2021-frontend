@@ -6,14 +6,41 @@ class RegisterPage extends StatefulWidget {
   _RegisterPageState createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMixin {
 
   final _usernameFocusNode = FocusNode();
   final _usernameController = TextEditingController();
   final _passwordFocusNode = FocusNode();
   final _passwordController = TextEditingController();
-  final _emailController = TextEditingController();
   final _emailFocusNode = FocusNode();
+  final _emailController = TextEditingController();
+
+  AnimationController _animationController;
+  Animation _animation;
+  double _height = 130.0;
+
+  void _focusHandler() {
+    if (_usernameFocusNode.hasFocus || _passwordFocusNode.hasFocus || _emailFocusNode.hasFocus) {
+        _animationController.forward();
+      } else {
+        _animationController.reverse();
+      }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(duration: Duration(milliseconds: 200), vsync: this);
+    _animation = Tween<double>(begin: 0.0, end: 80.0).chain(CurveTween(curve: Curves.ease)).animate(_animationController)..addListener(() {
+      setState(() {
+        _height = 130.0 - _animation.value;
+      });
+    });
+    _usernameFocusNode.addListener(_focusHandler);
+    _passwordFocusNode.addListener(_focusHandler);
+    _emailFocusNode.addListener(_focusHandler);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +91,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             ),
             SizedBox(
-              height: 130,
+              height: _height,
             ),
             TextFormField(
               focusNode: _emailFocusNode,
@@ -72,7 +99,7 @@ class _RegisterPageState extends State<RegisterPage> {
               decoration: InputDecoration(
                 labelText: "Email",
                 contentPadding: EdgeInsets.fromLTRB(30,20,30,20),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), borderSide: BorderSide(color: Colors.grey)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
               ),
             ),
             SizedBox(
@@ -84,7 +111,7 @@ class _RegisterPageState extends State<RegisterPage> {
               decoration: InputDecoration(
                 labelText: "Username",
                 contentPadding: EdgeInsets.fromLTRB(30,20,30,20),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), borderSide: BorderSide(color: Colors.grey)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
               ),
             ),
             SizedBox(
@@ -97,7 +124,7 @@ class _RegisterPageState extends State<RegisterPage> {
               decoration: InputDecoration(
                 labelText: "Password",
                 contentPadding: EdgeInsets.fromLTRB(30,20,30,20),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), borderSide: BorderSide(color: Colors.grey)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
               ),
             ),
             SizedBox(
@@ -118,7 +145,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 padding: EdgeInsets.all(20),
-                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
+                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
               ),
             ),
           ],
