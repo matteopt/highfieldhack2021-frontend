@@ -177,13 +177,16 @@ class ProgressPage extends StatefulWidget {
   _ProgressPageState createState() => _ProgressPageState();
 }
 
-class _ProgressPageState extends State<ProgressPage> {
+class _ProgressPageState extends State<ProgressPage> with AutomaticKeepAliveClientMixin<ProgressPage> {
 
   ScrollController _scrollController;
   ValueNotifier<double> _scrollNotifier;
 
   double _expandedHeight = 250;
   double _parallax = 0;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {

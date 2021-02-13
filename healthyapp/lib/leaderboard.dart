@@ -6,13 +6,16 @@ class LeaderboardPage extends StatefulWidget {
   _LeaderboardPageState createState() => _LeaderboardPageState();
 }
 
-class _LeaderboardPageState extends State<LeaderboardPage> {
+class _LeaderboardPageState extends State<LeaderboardPage> with AutomaticKeepAliveClientMixin<LeaderboardPage> {
 
   ScrollController _scrollController;
   ValueNotifier<double> _scrollNotifier;
 
   double _expandedHeight = 250;
   double _parallax = 0;
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {

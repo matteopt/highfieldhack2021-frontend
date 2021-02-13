@@ -132,10 +132,13 @@ class SocialPage extends StatefulWidget {
   final String username;
 }
 
-class _SocialPageState extends State<SocialPage> {
+class _SocialPageState extends State<SocialPage> with AutomaticKeepAliveClientMixin<SocialPage> {
 
   List<String> _requestsToMe = [];
   List<String> _requestsFromMe = [];
+
+  @override
+  bool get wantKeepAlive => true;
 
   Future<void> refresh() async {
     http.Response response1 = await getFriendRequestsReceived(widget.username);
