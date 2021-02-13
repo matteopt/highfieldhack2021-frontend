@@ -84,19 +84,51 @@ class _LeaderboardPageState extends State<LeaderboardPage> {
                       return Column(
                         children: [
                           SizedBox(height: 5),
-                          Card(
-                            elevation: 0,
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: Colors.blue,
-                                backgroundImage: NetworkImage('https://pbs.twimg.com/media/D4SR_cEXkAA98D4.jpg'),
-                                radius: 40,
+                          Container(
+                            height: 100,
+                            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundColor: Colors.blue,
+                                      backgroundImage: NetworkImage('https://pbs.twimg.com/media/D4SR_cEXkAA98D4.jpg'),
+                                      radius: 30,
+                                    ),
+                                    SizedBox(width: 20,),
+                                    Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          "Username",
+                                          style: TextStyle(
+                                            fontSize: 18
+                                          ),
+                                        ),
+                                        Text(
+                                          "Subtitle",
+                                          style: TextStyle(
+                                            color: Colors.black45
+                                          )
+                                        ),
+                                      ],
+                                    ),
+                                  ]
                                 ),
-                              title: Text('Username'),
-                              subtitle: Text('Subtitle'),
-                              trailing: (medal(index) != null) ? Image(image: medal(index),) : null,
-                              isThreeLine: true,
-                            ),
+                                if (medal(index) != null)
+                                  SizedBox(
+                                    width: 60,
+                                    height: 60,
+                                    child: Image(image: medal(index))
+                                  )
+                              ],
+                            )
                           ),
                           SizedBox(height: 5),
                           Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
