@@ -2,21 +2,25 @@ import 'package:flutter/material.dart';
 
 enum TaskType {
   running,
+  ropejumping,
 }
 
 class TaskCard extends StatefulWidget {
   @override
   _TaskCardState createState() => _TaskCardState();
 
-  TaskCard({Key key, @required this.type, @required this.amount});
+  TaskCard({Key key, @required this.type, @required this.goal, @required this.progress});
 
   final TaskType type;
-  final int amount;
+  final int goal;
+  final double progress;
 }
 
 class _TaskCardState extends State<TaskCard> {
 
   String _title;
+  String _iconUrl;
+  Size _progressSize;
   double _iconRadius = 40.0;
 
   @override
@@ -25,17 +29,31 @@ class _TaskCardState extends State<TaskCard> {
 
     switch (widget.type) {
       case TaskType.running:
-        _title = "Run ";
+        _title = "Run " + widget.goal.toString() + " miles.";
+        _iconUrl = "https://files.catbox.moe/mukn0p.png";
+        break;
+      case TaskType.ropejumping:
+        _title = "Jump the rope " + widget.goal.toString() + " hours.";
+        _iconUrl = "https://files.catbox.moe/soltzy.png";
         break;
       default:
         _title = "DEFAULT";
+        _iconUrl = "";
     }
 
-    _title += widget.amount.toString() + " miles.";
   }
 
   @override
   Widget build(BuildContext context) {
+    
+    _progressSize = (TextPainter(
+        text: TextSpan(text: widget.progress.toString(), style: TextStyle(fontWeight: FontWeight.w600)),
+        maxLines: 1,
+        textScaleFactor: MediaQuery.of(context).textScaleFactor,
+        textDirection: TextDirection.ltr)
+      ..layout())
+    .size;
+
     return Material(
       color: Colors.white,
       child: InkWell(
@@ -55,7 +73,7 @@ class _TaskCardState extends State<TaskCard> {
                 children: [
                   CircleAvatar(
                     backgroundColor: Colors.blue,
-                    backgroundImage: NetworkImage("https://files.catbox.moe/mukn0p.png"),
+                    backgroundImage: NetworkImage(_iconUrl),
                     radius: _iconRadius,
                   ),
                   SizedBox(width: 20),
@@ -83,7 +101,6 @@ class _TaskCardState extends State<TaskCard> {
                         ),
                         SizedBox(height: 10),
                         Stack(
-                          overflow: Overflow.visible,
                           children: <Widget>[
                             Container(
                               height: 10,
@@ -92,17 +109,22 @@ class _TaskCardState extends State<TaskCard> {
                             ),
                             Container(
                               height: 10,
-                              width: MediaQuery.of(context).size.width - 40 - _iconRadius * 2 - 20 -200,
+                              width: widget.progress * (MediaQuery.of(context).size.width - 40 - _iconRadius * 2 - 20) / widget.goal,
                               decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(30)), color: Colors.blue[300]),
                             ),
                           ],
                         ),
                         Container(
+                          height: 20,
                           width: MediaQuery.of(context).size.width - 40 - _iconRadius * 2 - 20,
                           child: Stack(
                             children: <Widget>[
-                              Text("0", style: TextStyle(fontWeight: FontWeight.w600),),
-                              Align(alignment: Alignment.centerRight, child: Text(widget.amount.toString(), style: TextStyle(fontWeight: FontWeight.w600),),)
+                              Positioned(
+                                left: widget.progress * (MediaQuery.of(context).size.width - 40 - _iconRadius * 2 - 20 - _progressSize.width) / widget.goal,
+                                child: Text(widget.progress.toString(), style: TextStyle(fontWeight: FontWeight.w600)),
+                              )
+                              //Text("0", style: TextStyle(fontWeight: FontWeight.w600),),
+                              //Align(alignment: Alignment.centerRight, child: Text(widget.amount.toString(), style: TextStyle(fontWeight: FontWeight.w600),),)
                             ],
                           ),
                         )
@@ -238,12 +260,13 @@ class _ProgressPageState extends State<ProgressPage> {
                 ),
 
                 SliverList(
-                  delegate: SliverChildBuilderDelegate((index, context) {
+                  delegate: SliverChildBuilderDelegate((context, index) {
                     return Column(
                       children: [
                         TaskCard(
-                          type: TaskType.running,
-                          amount: 50,
+                          type: index % 2 == 0 ? TaskType.running : TaskType.ropejumping,
+                          goal: 50,
+                          progress: 36.2,
                         ),
                         Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
                       ],
