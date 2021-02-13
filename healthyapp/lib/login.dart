@@ -7,17 +7,44 @@ class LoginPage extends StatefulWidget {
   _LoginPageState createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
 
   final _usernameFocusNode = FocusNode();
   final _usernameController = TextEditingController();
   final _passwordFocusNode = FocusNode();
   final _passwordController = TextEditingController();
 
+  AnimationController _animationController;
+  Animation _animation;
+  double _height = 130.0;
+
+  void _focusHandler() {
+    if (_usernameFocusNode.hasFocus || _passwordFocusNode.hasFocus) {
+        _animationController.forward();
+      } else {
+        _animationController.reverse();
+      }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(duration: Duration(milliseconds: 200), vsync: this);
+    _animation = Tween<double>(begin: 0.0, end: 80.0).chain(CurveTween(curve: Curves.ease)).animate(_animationController)..addListener(() {
+      setState(() {
+        _height = 130.0 - _animation.value;
+      });
+    });
+    _usernameFocusNode.addListener(_focusHandler);
+    _passwordFocusNode.addListener(_focusHandler);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.white,
       bottomNavigationBar: BottomAppBar(
         child: Container(
           height: 75,
@@ -39,9 +66,8 @@ class _LoginPageState extends State<LoginPage> {
         ),
         elevation: 0,
       ),
-      body: Container(
+      body: Padding(
         padding: EdgeInsets.only(left: 25, right: 25, top: 100),
-        color: Colors.white,
         child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +89,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             SizedBox(
-              height: 130,
+              height: _height,
             ),
             TextFormField(
               focusNode: _usernameFocusNode,
@@ -71,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
               decoration: InputDecoration(
                 labelText: "Username",
                 contentPadding: EdgeInsets.fromLTRB(30,20,30,20),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), borderSide: BorderSide(color: Colors.grey)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
               ),
             ),
             SizedBox(
@@ -84,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
               decoration: InputDecoration(
                 labelText: "Password",
                 contentPadding: EdgeInsets.fromLTRB(30,20,30,20),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20.0), borderSide: BorderSide(color: Colors.grey)),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
               ),
             ),
             SizedBox(
@@ -96,9 +122,10 @@ class _LoginPageState extends State<LoginPage> {
                 color: Colors.blue,
                 onPressed: () {
                   if (_usernameController.text.isEmpty || _usernameController.text.isEmpty) {
-                    _showAlertDialog("Please complete all fields");
+                    
                   } else {
-
+                    print(_usernameController.text);
+                    print(_passwordController.text);
                   }
                 },
                 elevation: 5,
@@ -111,33 +138,12 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 padding: EdgeInsets.all(20),
-                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(20.0)),
+                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
               ),
             ),
           ],
         ),
       ),
-    );
-  }
-  void _showAlertDialog(String message) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-         title: Text('Error'),
-        content: Container(
-          child: Text(message),
-        ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 }
