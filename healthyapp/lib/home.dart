@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthyapp/leaderboard.dart';
 import 'package:healthyapp/navbar.dart';
 import 'package:healthyapp/progress.dart';
 import 'package:healthyapp/social.dart';
@@ -41,6 +42,7 @@ class _HomePageState extends State<HomePage> {
     List<Widget> _pages = [
       ProgressPage(),
       SocialPage(username: widget.username,),
+      LeaderboardPage(),
     ];
 
     return Scaffold(
