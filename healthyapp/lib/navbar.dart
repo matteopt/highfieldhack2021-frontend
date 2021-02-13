@@ -192,7 +192,7 @@ class NavBarState extends State<NavBar> {
               index: 2,
               pageScrollNotifier: widget.pageScrollNotifier,
               pageJumpCallback: widget.pageJumpCallback,
-              icon: IconData(59399, fontFamily: 'MaterialIcons'),
+              icon: Icons.leaderboard_rounded,
               labelText: 'Ranks',
               color: Colors.blue,
             ),
