@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:healthyapp/requests.dart';
+import 'package:http/http.dart' as http;
 
 
 class LeaderboardPage extends StatefulWidget {
@@ -13,6 +17,15 @@ class _LeaderboardPageState extends State<LeaderboardPage> with AutomaticKeepAli
 
   double _expandedHeight = 250;
   double _parallax = 0;
+  Map<String,int> _entries = Map<String,int>();
+
+  void refresh() async {
+    http.Response response = await getLeaderBoards();
+    print(response.body);
+    setState(() {
+      _entries = Map<String, int>.from(jsonDecode(response.body));
+    });
+  }
 
   @override
   bool get wantKeepAlive => true;
@@ -20,6 +33,8 @@ class _LeaderboardPageState extends State<LeaderboardPage> with AutomaticKeepAli
   @override
   void initState() {
     super.initState();
+
+    refresh();
 
     _scrollController = ScrollController();
     _scrollNotifier = ValueNotifier<double>(0.0);
@@ -84,59 +99,62 @@ class _LeaderboardPageState extends State<LeaderboardPage> with AutomaticKeepAli
 
                   SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
-                      return Column(
-                        children: [
-                          SizedBox(height: 5),
-                          Container(
-                            height: 100,
-                            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    CircleAvatar(
-                                      backgroundColor: Colors.blue,
-                                      backgroundImage: NetworkImage('https://pbs.twimg.com/media/D4SR_cEXkAA98D4.jpg'),
-                                      radius: 30,
-                                    ),
-                                    SizedBox(width: 20,),
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          "Username",
-                                          style: TextStyle(
-                                            fontSize: 18
+                      if (index < _entries.length) {
+                        return Column(
+                          children: [
+                            Container(
+                              color: Colors.white,
+                              height: 120,
+                              padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor: Colors.blue,
+                                        backgroundImage: NetworkImage('https://pbs.twimg.com/media/D4SR_cEXkAA98D4.jpg'),
+                                        radius: 30,
+                                      ),
+                                      SizedBox(width: 20,),
+                                      Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
+                                          Text(
+                                            _entries.entries.elementAt(index).key,
+                                            style: TextStyle(
+                                              fontSize: 18
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          "Subtitle",
-                                          style: TextStyle(
-                                            color: Colors.black45
-                                          )
-                                        ),
-                                      ],
-                                    ),
-                                  ]
-                                ),
-                                if (medal(index) != null)
-                                  SizedBox(
-                                    width: 60,
-                                    height: 60,
-                                    child: Image(image: medal(index))
-                                  )
-                              ],
-                            )
-                          ),
-                          SizedBox(height: 5),
-                          Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
-                        ],
-                      );
+                                          Text(
+                                            _entries.entries.elementAt(index).value.toString(),
+                                            style: TextStyle(
+                                              color: Colors.black45
+                                            )
+                                          ),
+                                        ],
+                                      ),
+                                    ]
+                                  ),
+                                  if (medal(index) != null)
+                                    SizedBox(
+                                      width: 60,
+                                      height: 60,
+                                      child: Image(image: medal(index))
+                                    )
+                                ],
+                              )
+                            ),
+                            if (index < _entries.length - 1)
+                              Container(child: Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,), color: Colors.white,),
+                          ],
+                        );
+                      }
+                      return null;
                     }),
                   )
                 ]

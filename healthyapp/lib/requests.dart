@@ -45,3 +45,11 @@ Future<http.Response> getFriendRequestsSent(String username) {
     Uri.http(_ip, 'main/friend_requests_sent/' + username),
   );
 }
+
+Future<http.Response> getLeaderBoards() {
+  return http.get(
+    Uri.http(_ip, 'main/leaderboards/'),
+  );
+}
+
+
