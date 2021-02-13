@@ -23,11 +23,13 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   bool _loading = false;
 
   void _focusHandler() {
-    if (_usernameFocusNode.hasFocus || _passwordFocusNode.hasFocus) {
+    try {
+      if (_usernameFocusNode.hasFocus || _passwordFocusNode.hasFocus) {
         _animationController.forward();
       } else {
         _animationController.reverse();
       }
+    } catch (_) {}
   }
 
   @override
@@ -142,7 +144,8 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                       });
 
                       if (response.body == '1') {
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage()), (route) => false);
+                        _animationController.dispose();
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(username: username,)), (route) => false);
                       } else if (response.body == '0') {
                         return showDialog(
                           context: context,

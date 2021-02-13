@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:healthyapp/navbar.dart';
 import 'package:healthyapp/progress.dart';
+import 'package:healthyapp/social.dart';
 
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
+
+  HomePage({Key key, @required this.username});
+
+  final String username;
 }
 
 class _HomePageState extends State<HomePage> {
   
   int _index = 0;
-  List<Widget> _pages = [
-    ProgressPage(),
-    Container(color: Colors.white),
-  ];
 
   PageController _pageController;
   ValueNotifier<double> _pageScrollNotifier;
@@ -36,6 +37,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    
+    List<Widget> _pages = [
+      ProgressPage(),
+      SocialPage(username: widget.username,),
+    ];
+
     return Scaffold(
       body: PageView(
         children: _pages,
