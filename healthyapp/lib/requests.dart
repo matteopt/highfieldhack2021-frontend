@@ -23,3 +23,25 @@ Future<http.Response> loginUser(String username, String password) {
     },
   );
 }
+
+Future<http.Response> addFriend(String from, String to) {
+  return http.post(
+    Uri.http(_ip, 'main/add/'),
+    body: <String, String>{
+      'user1': from,
+      'user2': to,
+    },
+  );
+}
+
+Future<http.Response> getFriendRequestsReceived(String username) {
+  return http.get(
+    Uri.http(_ip, 'main/friend_requests_received/' + username),
+  );
+}
+
+Future<http.Response> getFriendRequestsSent(String username) {
+  return http.get(
+    Uri.http(_ip, 'main/friend_requests_sent/' + username),
+  );
+}

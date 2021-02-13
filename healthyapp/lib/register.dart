@@ -163,7 +163,7 @@ class _RegisterPageState extends State<RegisterPage> with TickerProviderStateMix
                       });
 
                       if (response.body == '200') {
-                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage()), (route) => false);
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => HomePage(username: username,)), (route) => false);
                       } else if (response.body == '516') {
                         return showDialog(
                           context: context,

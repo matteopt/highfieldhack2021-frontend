@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:healthyapp/requests.dart';
+import 'package:http/http.dart' as http;
 
 class FriendRequest extends StatelessWidget {
 
-  FriendRequest({Key key, @required this.refreshCallback, @required this.myOwn});
+  FriendRequest({Key key, @required this.username, @required this.refreshCallback, @required this.myOwn});
 
+  final String username;
   final VoidCallback refreshCallback;
   final bool myOwn;
 
@@ -26,14 +31,14 @@ class FriendRequest extends StatelessWidget {
               backgroundImage: NetworkImage("https://i.redd.it/3h830ttao8341.jpg"),
             ),
             SizedBox(width: 10,),
-            Text("Cute doggo 420", style: TextStyle(fontWeight: FontWeight.w600)),
+            Text(this.username, style: TextStyle(fontWeight: FontWeight.w600)),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              if (myOwn)
+              if (!myOwn)
               SizedBox(
                 width: 40,
                 height: 40,
@@ -47,7 +52,7 @@ class FriendRequest extends StatelessWidget {
                   padding: EdgeInsets.all(5),
                 ),
               ),
-              if (!myOwn)
+              if (myOwn)
               Text(
                 "PENDING",
                 style: TextStyle(
@@ -121,19 +126,89 @@ class FriendTile extends StatelessWidget {
 class SocialPage extends StatefulWidget {
   @override
   _SocialPageState createState() => _SocialPageState();
+
+  SocialPage({Key key, @required this.username});
+
+  final String username;
 }
 
 class _SocialPageState extends State<SocialPage> {
 
-  void refresh() {
+  List<String> _requestsToMe = [];
+  List<String> _requestsFromMe = [];
+
+  Future<void> refresh() async {
+    http.Response response1 = await getFriendRequestsReceived(widget.username);
+    http.Response response2 = await getFriendRequestsSent(widget.username);
+
+    print(response1.body);
+    print(response2.body);
+
+    if (response1.body == '518' || response1.body == '517') {
+      setState(() {
+        _requestsToMe = [];
+      });
+    } else {
+      setState(() {
+        _requestsToMe = response1.body.split(" ");
+      });
+    }
+
+    if (response2.body == '519' || response2.body == '520') {
+      setState(() {
+        _requestsFromMe = [];
+      });
+    } else {
+      setState(() {
+        _requestsFromMe = response2.body.split(" ");
+      });
+    }
+
     return;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    refresh();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () async {
+          return showDialog(
+            context: context,
+            barrierDismissible: true,
+            builder: (context) {
+              TextEditingController _tc = TextEditingController();
+              return AlertDialog(
+                title: Text("Enter a username"),
+                content: TextField(
+                  controller: _tc,
+                  decoration: InputDecoration(
+                    labelText: "Username",
+                    contentPadding: EdgeInsets.fromLTRB(30,20,30,20),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.0), borderSide: BorderSide(color: Colors.grey)),
+                  ),
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text("SEND REQUEST"),
+                    onPressed: () async {
+                      http.Response response = await addFriend(widget.username, _tc.text);
+                      print(response.body);
+                      Navigator.of(context).pop();
+                      refresh();
+                    },
+                  )
+                ],
+              );
+            }
+          );
+        },
         backgroundColor: Colors.blue,
         child: Icon(Icons.add, size: 25,),
       ),
@@ -141,54 +216,69 @@ class _SocialPageState extends State<SocialPage> {
         color: Colors.white,
         child: RefreshIndicator(
           strokeWidth: 2.5,
-          onRefresh: () {  return Future<void>(null); },
+          onRefresh: () {  return refresh(); },
           child: CustomScrollView(
             physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
             slivers: <Widget>[
-              
+
               SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(height: 40,),
-                      Text(
-                        "Your friend requests",
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      )
-                    ],
+                child: SizedBox(height: 30,),
+              ),
+              
+              if (_requestsToMe.isNotEmpty || _requestsFromMe.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(height: 10,),
+                        Text(
+                          "Your friend requests",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    if (index < 3)
-                      return Column(
-                        children: <Widget>[
-                          FriendRequest(refreshCallback: refresh, myOwn: true,),
-                          Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
-                        ],
-                      );
-                    if (index >= 3 && index < 5)
-                      return Column(
-                        children: <Widget>[
-                          FriendRequest(refreshCallback: refresh, myOwn: false,),
-                          if (index < 4)
-                            Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
-                        ],
-                      );
-                    return null;
-                  }
+              if (_requestsToMe.isNotEmpty || _requestsFromMe.isNotEmpty)
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (index < _requestsToMe.length) {
+                        return Column(
+                          children: <Widget>[
+                            FriendRequest(
+                              username: _requestsToMe[index],
+                              refreshCallback: refresh,
+                              myOwn: false
+                            ),
+                            if (index < _requestsToMe.length + _requestsFromMe.length - 1)
+                              Divider(indent: 40, endIndent: 40, height: 1, thickness: 1),
+                          ],
+                        );
+                      } else if (index < _requestsToMe.length + _requestsFromMe.length) {
+                        return Column(
+                          children: <Widget>[
+                            FriendRequest(
+                              username: _requestsFromMe[index - _requestsToMe.length],
+                              refreshCallback: refresh,
+                              myOwn: true
+                            ),
+                            if (index < _requestsToMe.length + _requestsFromMe.length - 1)
+                              Divider(indent: 40, endIndent: 40, height: 1, thickness: 1),
+                          ],
+                        );
+                      }
+                    }
+                  ),
                 ),
-              ),
 
               SliverToBoxAdapter(
                 child: Padding(
