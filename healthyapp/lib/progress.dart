@@ -23,6 +23,9 @@ class _TaskCardState extends State<TaskCard> {
   Size _progressSize;
   double _iconRadius = 40.0;
 
+  double _barSize = 0;
+  double _progressPadding = 0;
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +56,11 @@ class _TaskCardState extends State<TaskCard> {
         textDirection: TextDirection.ltr)
       ..layout())
     .size;
+
+    _barSize = MediaQuery.of(context).size.width - 40 - _iconRadius * 2 - 20;
+    _progressPadding = widget.progress * (MediaQuery.of(context).size.width - 40 - _iconRadius * 2 - 20) / widget.goal;
+    if (_progressPadding + _progressSize.width > _barSize)
+      _progressPadding = _barSize - _progressSize.width;
 
     return Material(
       color: Colors.white,
@@ -104,23 +112,23 @@ class _TaskCardState extends State<TaskCard> {
                           children: <Widget>[
                             Container(
                               height: 10,
-                              width: MediaQuery.of(context).size.width - 40 - _iconRadius * 2 - 20,
+                              width: _barSize,
                               decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(30)), color: Colors.grey[300]),
                             ),
                             Container(
                               height: 10,
-                              width: widget.progress * (MediaQuery.of(context).size.width - 40 - _iconRadius * 2 - 20) / widget.goal,
+                              width: widget.progress * _barSize / widget.goal,
                               decoration: BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(30)), color: Colors.blue[300]),
                             ),
                           ],
                         ),
                         Container(
                           height: 20,
-                          width: MediaQuery.of(context).size.width - 40 - _iconRadius * 2 - 20,
+                          width: _barSize,
                           child: Stack(
                             children: <Widget>[
                               Positioned(
-                                left: widget.progress * (MediaQuery.of(context).size.width - 40 - _iconRadius * 2 - 20 - _progressSize.width) / widget.goal,
+                                left: _progressPadding,
                                 child: Text(widget.progress.toString(), style: TextStyle(fontWeight: FontWeight.w600)),
                               )
                               //Text("0", style: TextStyle(fontWeight: FontWeight.w600),),
@@ -266,7 +274,7 @@ class _ProgressPageState extends State<ProgressPage> {
                         TaskCard(
                           type: index % 2 == 0 ? TaskType.running : TaskType.ropejumping,
                           goal: 50,
-                          progress: 36.2,
+                          progress: 36.5,
                         ),
                         Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
                       ],
