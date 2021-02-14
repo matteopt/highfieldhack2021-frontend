@@ -146,6 +146,29 @@ Future<Null> _selectDate(BuildContext context) async {
               );
             },
           ),
+          SizedBox(height: 15,),
+          ListTile(
+            onTap: () async {
+                    _selectDate(context);
+                  },
+            dense: true,
+            title: Text(
+              "Choose Date",
+              style: TextStyle(
+                fontSize: 15.5,
+                fontWeight: FontWeight.w400,
+                )),
+            subtitle: Text(
+              "Deadline: " + (_selectedDate == null ? "choose a deadline" : _selectedDate.toString().split(" ")[0]),
+              style: TextStyle(
+                fontSize: 13.7,
+                fontWeight: FontWeight.w400
+                )),
+            leading: Image(
+              image: NetworkImage('https://files.catbox.moe/nu9j0k.png'),
+              height: 42,),
+            trailing: Icon(Icons.keyboard_arrow_right),
+          ),
           SizedBox(height: 10,),
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
@@ -175,28 +198,7 @@ Future<Null> _selectDate(BuildContext context) async {
               ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  "Deadline: " + (_selectedDate == null ? "choose a deadline" : _selectedDate.toString().split(" ")[0]),
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                FlatButton(
-                  onPressed: () async {
-                    _selectDate(context);
-                  },
-                  child: Text("CHOOSE DATE", style: TextStyle(color: Colors.blue, ),),
-                ),
-              ],
-            ),
-          ),
+          
 
           SizedBox(height: 20,),
 

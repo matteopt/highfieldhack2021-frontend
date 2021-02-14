@@ -157,10 +157,12 @@ class _SocialPageState extends State<SocialPage> with AutomaticKeepAliveClientMi
     http.Response response1 = await getFriendRequestsReceived(widget.username);
     http.Response response2 = await getFriendRequestsSent(widget.username);
     http.Response response3 = await getFriends(widget.username);
+    http.Response response4 = await getPendingChallenges(widget.username);
 
     print(response1.body);
     print(response2.body);
     print(response3.body);
+    print(response4.body);
     
     if (response1.body == '518' || response1.body == '517') {
       setState(() {

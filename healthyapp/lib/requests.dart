@@ -73,6 +73,12 @@ Future<http.Response> getChallenges(String username) {
   );
 }
 
+Future<http.Response> getPendingChallenges(String username) {
+  return http.get(
+    Uri.http(_ip, 'main/pending_challenges/' + username),
+  );
+}
+
 Future<http.Response> getFriends(String username) {
   return http.get(
     Uri.http(_ip, 'main/friends/' + username),
