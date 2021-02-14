@@ -15,7 +15,9 @@ class CreateTaskPage extends StatefulWidget {
 class _CreateTaskPageState extends State<CreateTaskPage> {
   
   String _exercise = null;
-  
+
+  double _currentSliderValue = 0;
+
   List<String> _people = [];
   
   List<Map<String, dynamic>> _friends = [];
@@ -166,7 +168,29 @@ Future<Null> _selectDate(BuildContext context) async {
                 ),
               ],
             ),
-            
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(
+                  child: Slider(
+                    value: _currentSliderValue,
+                    min: 0,
+                    max: 100,
+                    divisions: 5,
+                    label: _currentSliderValue.round().toString(),
+                    onChanged: (double value) {
+                      setState(() {
+                        _currentSliderValue = value;
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
