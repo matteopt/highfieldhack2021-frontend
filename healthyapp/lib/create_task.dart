@@ -96,7 +96,7 @@ Future<Null> _selectDate(BuildContext context) async {
               ),
             ),
           ),
-          SizedBox(height: 10,),
+          SizedBox(height: 20,),
           Container(
             child: SmartSelect<String>.single(
               title: 'Exercise type',
@@ -200,7 +200,7 @@ Future<Null> _selectDate(BuildContext context) async {
           ),
           
 
-          SizedBox(height: 20,),
+          SizedBox(height: 45,),
 
           Padding(
             padding: const EdgeInsets.only(left: 20, right: 20),
