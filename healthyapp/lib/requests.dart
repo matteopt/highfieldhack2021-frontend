@@ -54,6 +54,19 @@ Future<http.Response> rejectRequest(String from, String to) {
   );
 }
 
+Future<http.Response> sendChallenge(String from, List<String> to, String type, int goal, String deadline) {
+  return http.post(
+    Uri.http(_ip, 'main/add_challenge/'),
+    body: <String, String>{
+      'from': from,
+      'to': jsonEncode(to),
+      'type': type,
+      'goal': goal.toString(),
+      'deadline': deadline,
+    },
+  );
+}
+
 Future<http.Response> getFriends(String username) {
   return http.get(
     Uri.http(_ip, 'main/friends/' + username),

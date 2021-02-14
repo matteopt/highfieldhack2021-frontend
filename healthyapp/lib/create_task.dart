@@ -206,7 +206,10 @@ Future<Null> _selectDate(BuildContext context) async {
               width: double.infinity,
               child: RaisedButton(
                 color: Colors.blue,
-                onPressed: () {},
+                onPressed: () async {
+                  http.Response response = await sendChallenge(widget.username, _people, _exercise, _currentSliderValue.round(), _selectedDate.toString().split(" ")[0]);
+                  print(response.body);
+                },
                 elevation: 5,
                 child: Text(
                   "CREATE",
