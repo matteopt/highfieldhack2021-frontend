@@ -272,15 +272,18 @@ class _ProgressPageState extends State<ProgressPage> with AutomaticKeepAliveClie
 
                 SliverList(
                   delegate: SliverChildBuilderDelegate((context, index) {
-                    return Column(
-                      children: [
-                        TaskCard(
-                          type: index % 2 == 0 ? TaskType.running : TaskType.ropejumping,
-                          goal: 50,
-                          progress: 36.5,
-                        ),
-                        Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
-                      ],
+                    return Container(
+                      color: Colors.white,
+                      child: Column(
+                        children: [
+                          TaskCard(
+                            type: index % 2 == 0 ? TaskType.running : TaskType.ropejumping,
+                            goal: 50,
+                            progress: 36.5,
+                          ),
+                          Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
+                        ],
+                      ),
                     );
                   }),
                 )
