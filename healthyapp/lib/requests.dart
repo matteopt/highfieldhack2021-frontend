@@ -67,6 +67,12 @@ Future<http.Response> sendChallenge(String from, List<String> to, String type, i
   );
 }
 
+Future<http.Response> getChallenges(String username) {
+  return http.get(
+    Uri.http(_ip, 'main/user_challenges/' + username),
+  );
+}
+
 Future<http.Response> getFriends(String username) {
   return http.get(
     Uri.http(_ip, 'main/friends/' + username),

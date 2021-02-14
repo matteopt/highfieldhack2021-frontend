@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:healthyapp/create_task.dart';
+import 'package:healthyapp/requests.dart';
+import 'package:http/http.dart' as http;
 
 enum TaskType {
   running,
@@ -190,6 +192,11 @@ class _ProgressPageState extends State<ProgressPage> with AutomaticKeepAliveClie
   double _expandedHeight = 250;
   double _parallax = 0;
 
+  Future<void> _refresh() async {
+    http.Response response = await getChallenges(widget.username);
+    print(response.body);
+  }
+
   @override
   bool get wantKeepAlive => true;
 
@@ -241,7 +248,7 @@ class _ProgressPageState extends State<ProgressPage> with AutomaticKeepAliveClie
             ),
             RefreshIndicator(
               strokeWidth: 2.5,
-              onRefresh: () {  return Future<void>(null); },
+              onRefresh: () {  return _refresh(); },
               child: CustomScrollView(
                 physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                 controller: _scrollController,
