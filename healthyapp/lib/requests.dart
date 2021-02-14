@@ -34,6 +34,32 @@ Future<http.Response> addFriend(String from, String to) {
   );
 }
 
+Future<http.Response> acceptRequest(String from, String to) {
+  return http.post(
+    Uri.http(_ip, 'main/accept/'),
+    body: <String, String>{
+      'user1': from,
+      'user2': to,
+    },
+  );
+}
+
+Future<http.Response> rejectRequest(String from, String to) {
+  return http.post(
+    Uri.http(_ip, 'main/reject/'),
+    body: <String, String>{
+      'user1': from,
+      'user2': to,
+    },
+  );
+}
+
+Future<http.Response> getFriends(String username) {
+  return http.get(
+    Uri.http(_ip, 'main/friends/' + username),
+  );
+}
+
 Future<http.Response> getFriendRequestsReceived(String username) {
   return http.get(
     Uri.http(_ip, 'main/friend_requests_received/' + username),

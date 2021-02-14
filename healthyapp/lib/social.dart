@@ -6,9 +6,10 @@ import 'package:http/http.dart' as http;
 
 class FriendRequest extends StatelessWidget {
 
-  FriendRequest({Key key, @required this.username, @required this.refreshCallback, @required this.myOwn});
+  FriendRequest({Key key, @required this.username, @required this.myUsername, @required this.refreshCallback, @required this.myOwn});
 
   final String username;
+  final String myUsername;
   final VoidCallback refreshCallback;
   final bool myOwn;
 
@@ -43,7 +44,8 @@ class FriendRequest extends StatelessWidget {
                 width: 40,
                 height: 40,
                 child: MaterialButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    http.Response response = await acceptRequest(this.username, this.myUsername);
                     this.refreshCallback();
                   },
                   shape: CircleBorder(),
@@ -66,7 +68,12 @@ class FriendRequest extends StatelessWidget {
                 child: MaterialButton(
                   elevation: 1,
                   highlightElevation: 5,
-                  onPressed: () {
+                  onPressed: () async {
+                    if (!myOwn) {
+                      http.Response response = await rejectRequest(this.username, this.myUsername);
+                    } else {
+                      http.Response response = await rejectRequest(this.myUsername, this.username);
+                    }
                     this.refreshCallback();
                   },
                   shape: CircleBorder(),
@@ -84,6 +91,11 @@ class FriendRequest extends StatelessWidget {
 }
 
 class FriendTile extends StatelessWidget {
+
+  FriendTile({Key key, @required this.username});
+
+  final String username;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -104,7 +116,7 @@ class FriendTile extends StatelessWidget {
               backgroundImage: NetworkImage("https://yt3.ggpht.com/EdjnobpzppDl5pSVU2s2AUIiFS0qBfT8Jdodw-FHMhugJK5zmzWDLkpqDVtpnaLSP66M5F8nqINImLKGtQ=s900-nd-c-c0xffffffff-rj-k-no"),
             ),
             SizedBox(width: 10,),
-            Text("69HEALTHYDOGE69", style: TextStyle(fontWeight: FontWeight.w600)),
+            Text(this.username, style: TextStyle(fontWeight: FontWeight.w600)),
             ],
           ),
           FlatButton(
@@ -134,6 +146,7 @@ class SocialPage extends StatefulWidget {
 
 class _SocialPageState extends State<SocialPage> with AutomaticKeepAliveClientMixin<SocialPage> {
 
+  List<String> _friends = [];
   List<String> _requestsToMe = [];
   List<String> _requestsFromMe = [];
 
@@ -143,10 +156,12 @@ class _SocialPageState extends State<SocialPage> with AutomaticKeepAliveClientMi
   Future<void> refresh() async {
     http.Response response1 = await getFriendRequestsReceived(widget.username);
     http.Response response2 = await getFriendRequestsSent(widget.username);
+    http.Response response3 = await getFriends(widget.username);
 
     print(response1.body);
     print(response2.body);
-
+    print(response3.body);
+    
     if (response1.body == '518' || response1.body == '517') {
       setState(() {
         _requestsToMe = [];
@@ -164,6 +179,16 @@ class _SocialPageState extends State<SocialPage> with AutomaticKeepAliveClientMi
     } else {
       setState(() {
         _requestsFromMe = response2.body.split(" ");
+      });
+    }
+
+    if (response3.body == '521' || response3.body == '522') {
+      setState(() {
+        _friends = [];
+      });
+    } else {
+      setState(() {
+        _friends = response3.body.split(" ");
       });
     }
 
@@ -259,6 +284,7 @@ class _SocialPageState extends State<SocialPage> with AutomaticKeepAliveClientMi
                           children: <Widget>[
                             FriendRequest(
                               username: _requestsToMe[index],
+                              myUsername: widget.username,
                               refreshCallback: refresh,
                               myOwn: false
                             ),
@@ -271,6 +297,7 @@ class _SocialPageState extends State<SocialPage> with AutomaticKeepAliveClientMi
                           children: <Widget>[
                             FriendRequest(
                               username: _requestsFromMe[index - _requestsToMe.length],
+                              myUsername: widget.username,
                               refreshCallback: refresh,
                               myOwn: true
                             ),
@@ -304,21 +331,36 @@ class _SocialPageState extends State<SocialPage> with AutomaticKeepAliveClientMi
                 ),
               ),
 
-              SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    if (index < 3)
-                      return Column(
-                        children: <Widget>[
-                          FriendTile(),
-                          if (index < 2)
-                            Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
-                        ],
-                      );
-                    return null;
-                  }
+              if (_friends.isNotEmpty)
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (index < _friends.length)
+                        return Column(
+                          children: <Widget>[
+                            FriendTile(username: _friends[index],),
+                            if (index < _friends.length - 1)
+                              Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
+                          ],
+                        );
+                      return null;
+                    }
+                  ),
                 ),
-              ),
+              if (_friends.isEmpty)
+                SliverToBoxAdapter(
+                  child: Container(
+                    height: 100,
+                    child: Center(
+                      child: Text(
+                        "You don't have any friends.",
+                        style: TextStyle(
+                          color: Colors.black45,
+                        )
+                      ),
+                    ),
+                  ),
+                )
 
             ],
           ),
