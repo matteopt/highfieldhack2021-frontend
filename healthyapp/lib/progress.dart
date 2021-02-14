@@ -1,7 +1,28 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:healthyapp/create_task.dart';
 import 'package:healthyapp/requests.dart';
 import 'package:http/http.dart' as http;
+
+class Task {
+  final String to;
+  final String from;
+  final String type;
+  final String goal;
+  final String deadline;
+  final String progress;
+
+  Task(this.to, this.from, this.type, this.goal, this.deadline, this.progress);
+
+  Task.fromJson(Map<String, dynamic> json)
+      : to = json['received'] as String,
+        from = json['sent'] as String,
+        type = json['description'] as String,
+        goal = json['goal'] as String,
+        deadline = json['deadline'] as String,
+        progress = json['progress'] as String;
+}
 
 enum TaskType {
   running,
@@ -12,11 +33,12 @@ class TaskCard extends StatefulWidget {
   @override
   _TaskCardState createState() => _TaskCardState();
 
-  TaskCard({Key key, @required this.type, @required this.goal, @required this.progress});
+  TaskCard({Key key, @required this.type, @required this.goal, @required this.progress, @required this.deadline});
 
   final TaskType type;
   final int goal;
   final double progress;
+  final String deadline;
 }
 
 class _TaskCardState extends State<TaskCard> {
@@ -103,7 +125,7 @@ class _TaskCardState extends State<TaskCard> {
                           ),
                         ),
                         Text(
-                          "Ends on 25/02/2021",
+                          "Ends on " + widget.deadline,
                           style: TextStyle(
                             fontWeight: FontWeight.w400,
                             fontSize: 15,
@@ -192,9 +214,40 @@ class _ProgressPageState extends State<ProgressPage> with AutomaticKeepAliveClie
   double _expandedHeight = 250;
   double _parallax = 0;
 
+  bool _first = true;
+
+  List<Task> _tasks = [];
+
   Future<void> _refresh() async {
     http.Response response = await getChallenges(widget.username);
     print(response.body);
+
+    if (response.body == '514' || response.body == '515') {
+      setState(() {
+        _tasks = [];
+      });
+    } else {
+      setState(() {
+        _tasks = [];
+        var t = jsonDecode(response.body);
+        print(t.runtimeType);
+
+        if (t != null) {
+          t.forEach((e) {
+            var tt = e.replaceAll(RegExp("'"), '"');
+            tt = tt.replaceAll(RegExp(":"), ':"');
+            tt = tt.replaceAll(RegExp(","), '",');
+            tt = tt.replaceAll(RegExp("}"), '"}');
+            var ttt = jsonDecode(tt);
+            var cc = Task.fromJson(ttt);
+            print(cc.deadline);
+            _tasks.add(cc);
+          });
+        }
+      });
+    }
+
+    print(_tasks);
   }
 
   @override
@@ -218,6 +271,8 @@ class _ProgressPageState extends State<ProgressPage> with AutomaticKeepAliveClie
         }
       });
     });
+
+    _refresh().then((value) => _first = false);
   }
 
   @override
@@ -234,7 +289,18 @@ class _ProgressPageState extends State<ProgressPage> with AutomaticKeepAliveClie
           );
         },
       ),
-      body: Container(
+      body: _first ? 
+        Center(
+          child: SizedBox(
+            width: 100,
+            height: 100,
+            child: CircularProgressIndicator(
+              strokeWidth: 5,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+            ),
+          ),
+        )
+       : Container(
         color: Colors.white,
         child: Stack(
           children: [
@@ -283,6 +349,15 @@ class _ProgressPageState extends State<ProgressPage> with AutomaticKeepAliveClie
                                     CircleAvatar(
                                       backgroundImage: NetworkImage('https://ourfunnylittlesite.com/wp-content/uploads/2018/07/1-4.jpg'),
                                       radius: 40,
+                                    ),
+                                    SizedBox(width: 20,),
+                                    Text(
+                                      widget.username,
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black
+                                      ),
                                     )
                                   ],
                                 ),
@@ -296,19 +371,33 @@ class _ProgressPageState extends State<ProgressPage> with AutomaticKeepAliveClie
 
                   SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
-                      return Container(
-                        color: Colors.white,
-                        child: Column(
-                          children: [
-                            TaskCard(
-                              type: index % 2 == 0 ? TaskType.running : TaskType.ropejumping,
-                              goal: 50,
-                              progress: 36.5,
-                            ),
-                            Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
-                          ],
-                        ),
-                      );
+
+                      if (index < _tasks.length) {
+                        Task r = _tasks[index];
+                        TaskType t;
+                        switch (r.type) {
+                          case "1":
+                            t = TaskType.running;
+                            break;
+                          default:
+                        }
+                        return Container(
+                          color: Colors.white,
+                          child: Column(
+                            children: [
+                              TaskCard(
+                                type: t,
+                                goal: int.parse(r.goal),
+                                progress: double.parse(r.progress),
+                                deadline: r.deadline,
+                              ),
+                              if (index < _tasks.length - 1)
+                                Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
+                            ],
+                          ),
+                        );
+                      }
+                      
                     }),
                   )
                 ]

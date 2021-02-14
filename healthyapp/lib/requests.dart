@@ -67,6 +67,30 @@ Future<http.Response> sendChallenge(String from, List<String> to, String type, i
   );
 }
 
+Future<http.Response> acceptChallenge(String from, String to, String type, String deadline) {
+  return http.post(
+    Uri.http(_ip, 'main/challenge_accept/'),
+    body: <String, String>{
+      'from': from,
+      'to': to,
+      'type': type,
+      'deadline': deadline,
+    },
+  );
+}
+
+Future<http.Response> rejectChallenge(String from, String to, String type, String deadline) {
+  return http.post(
+    Uri.http(_ip, 'main/challenge_reject/'),
+    body: <String, String>{
+      'from': from,
+      'to': to,
+      'type': type,
+      'deadline': deadline,
+    },
+  );
+}
+
 Future<http.Response> getChallenges(String username) {
   return http.get(
     Uri.http(_ip, 'main/user_challenges/' + username),

@@ -4,6 +4,124 @@ import 'package:flutter/material.dart';
 import 'package:healthyapp/requests.dart';
 import 'package:http/http.dart' as http;
 
+class ChallengeRequest {
+  final String to;
+  final String from;
+  final String type;
+  final String goal;
+  final String deadline;
+  final String progress;
+
+  ChallengeRequest(this.to, this.from, this.type, this.goal, this.deadline, this.progress);
+
+  ChallengeRequest.fromJson(Map<String, dynamic> json)
+      : to = json['received'] as String,
+        from = json['sent'] as String,
+        type = json['description'] as String,
+        goal = json['goal'] as String,
+        deadline = json['deadline'] as String,
+        progress = json['progress'] as String;
+
+
+  // Map<String, dynamic> toJson() =>
+  //   {
+  //     'name': name,
+  //     'email': email,
+  //   };
+}
+
+class CRequest extends StatelessWidget {
+
+  CRequest({Key key, @required this.r, @required this.refreshCallback});
+
+  final ChallengeRequest r;
+  final VoidCallback refreshCallback;
+
+  @override
+  Widget build(BuildContext context) {
+
+    String _title = "";
+    switch (r.type) {
+      case "1":
+        _title = "Run " + r.goal.toString() + " miles.";
+        break;
+      default:
+    }
+
+    return Container(
+      height: 100,
+      color: Colors.white,
+      padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+            CircleAvatar(
+              radius: 25,
+              backgroundColor: Colors.blue,
+              backgroundImage: NetworkImage("https://i.redd.it/3h830ttao8341.jpg"),
+            ),
+            SizedBox(width: 10,),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(_title, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                Text("Deadline: " + r.deadline, style: TextStyle(color: Colors.black45),),
+                Text("Sent by " + r.from, style: TextStyle(color: Colors.black45),),
+
+              ],
+            ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: MaterialButton(
+                  onPressed: () async {
+                    http.Response response = await acceptChallenge(r.from, r.to, r.type, r.deadline);
+                    print(response.body);
+                    this.refreshCallback();
+                  },
+                  shape: CircleBorder(),
+                  child: Icon(Icons.check, color: Colors.white,),
+                  color: Colors.blue,
+                  padding: EdgeInsets.all(5),
+                ),
+              ),
+              SizedBox(width: 10,),
+              SizedBox(
+                width: 40,
+                height: 40,
+                child: MaterialButton(
+                  elevation: 1,
+                  highlightElevation: 5,
+                  onPressed: () async {
+                    http.Response response = await rejectChallenge(r.from, r.to, r.type, r.deadline);
+                    print(response.body);
+                    this.refreshCallback();
+                  },
+                  shape: CircleBorder(),
+                  child: Icon(Icons.clear, color: Colors.grey,),
+                  color: Colors.white,
+                  padding: EdgeInsets.all(5),
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class FriendRequest extends StatelessWidget {
 
   FriendRequest({Key key, @required this.username, @required this.myUsername, @required this.refreshCallback, @required this.myOwn});
@@ -119,16 +237,16 @@ class FriendTile extends StatelessWidget {
             Text(this.username, style: TextStyle(fontWeight: FontWeight.w600)),
             ],
           ),
-          FlatButton(
-            onPressed: () {},
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30))),
-            child: Text(
-              "CHALLENGE",
-              style: TextStyle(
-                color: Colors.blue
-              ),
-            ),
-          )
+          // FlatButton(
+          //   onPressed: () {},
+          //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(30))),
+          //   child: Text(
+          //     "CHALLENGE",
+          //     style: TextStyle(
+          //       color: Colors.blue
+          //     ),
+          //   ),
+          // )
         ],
       ),
     );
@@ -149,6 +267,9 @@ class _SocialPageState extends State<SocialPage> with AutomaticKeepAliveClientMi
   List<String> _friends = [];
   List<String> _requestsToMe = [];
   List<String> _requestsFromMe = [];
+  List<ChallengeRequest> _pending = [];
+
+  bool _first = true;
 
   @override
   bool get wantKeepAlive => true;
@@ -162,7 +283,7 @@ class _SocialPageState extends State<SocialPage> with AutomaticKeepAliveClientMi
     print(response1.body);
     print(response2.body);
     print(response3.body);
-    print(response4.body);
+    print(response4.body.runtimeType);
     
     if (response1.body == '518' || response1.body == '517') {
       setState(() {
@@ -194,6 +315,34 @@ class _SocialPageState extends State<SocialPage> with AutomaticKeepAliveClientMi
       });
     }
 
+    if (response4.body == '523' || response4.body == '524') {
+      setState(() {
+        _pending = [];
+      });
+    } else {
+      setState(() {
+        _pending = [];
+        var t = jsonDecode(response4.body);
+        print(t.runtimeType);
+
+        if (t != null) {
+          t.forEach((e) {
+            var tt = e.replaceAll(RegExp("'"), '"');
+            tt = tt.replaceAll(RegExp(":"), ':"');
+            tt = tt.replaceAll(RegExp(","), '",');
+            tt = tt.replaceAll(RegExp("}"), '"}');
+            var ttt = jsonDecode(tt);
+            var cc = ChallengeRequest.fromJson(ttt);
+            print(cc.deadline);
+            _pending.add(cc);
+          });
+        }
+      });
+    }
+
+    //var pc = ChallengeRequest.fromJson(t);
+    //print(pc.deadline);
+
     return;
   }
 
@@ -201,7 +350,7 @@ class _SocialPageState extends State<SocialPage> with AutomaticKeepAliveClientMi
   void initState() {
     super.initState();
 
-    refresh();
+    refresh().then((value) => _first = false);
   }
 
   @override
@@ -242,7 +391,18 @@ class _SocialPageState extends State<SocialPage> with AutomaticKeepAliveClientMi
         backgroundColor: Colors.blue,
         child: Icon(Icons.add, size: 25,),
       ),
-      body: Container(
+      body: _first ?
+        Center(
+          child: SizedBox(
+            width: 100,
+            height: 100,
+            child: CircularProgressIndicator(
+              strokeWidth: 5,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+            ),
+          ),
+        )
+      : Container(
         color: Colors.white,
         child: RefreshIndicator(
           strokeWidth: 2.5,
@@ -254,6 +414,48 @@ class _SocialPageState extends State<SocialPage> with AutomaticKeepAliveClientMi
               SliverToBoxAdapter(
                 child: SizedBox(height: 30,),
               ),
+
+              if (_pending.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(height: 10,),
+                        Text(
+                          "Your pending challenges",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              
+              if (_pending.isNotEmpty)
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      if (index < _pending.length) {
+                        return Column(
+                          children: <Widget>[
+                            CRequest(
+                              r: _pending[index],
+                              refreshCallback: refresh,
+                            ),
+                            if (index < _pending.length - 1)
+                              Divider(indent: 40, endIndent: 40, height: 1, thickness: 1),
+                          ],
+                        );
+                      }
+                    }
+                  ),
+                ),
               
               if (_requestsToMe.isNotEmpty || _requestsFromMe.isNotEmpty)
                 SliverToBoxAdapter(

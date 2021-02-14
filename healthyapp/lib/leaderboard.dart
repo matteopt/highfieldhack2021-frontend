@@ -23,6 +23,8 @@ class _LeaderboardPageState extends State<LeaderboardPage> with AutomaticKeepAli
   double _parallax = 0;
   Map<String,int> _entries = Map<String,int>();
 
+  bool _first = true;
+
   Future<void> refresh() async {
     http.Response response = await getLeaderBoards(widget.username);
     print(response.body);
@@ -40,7 +42,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> with AutomaticKeepAli
   void initState() {
     super.initState();
 
-    refresh();
+    refresh().then((value) => _first = false);
 
     _scrollController = ScrollController();
     _scrollNotifier = ValueNotifier<double>(0.0);
@@ -60,7 +62,18 @@ class _LeaderboardPageState extends State<LeaderboardPage> with AutomaticKeepAli
 
   @override
    Widget build(BuildContext context) {
-    return Material(
+    return _first ?
+      Center(
+        child: SizedBox(
+          width: 100,
+          height: 100,
+          child: CircularProgressIndicator(
+            strokeWidth: 5,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+          ),
+        ),
+      )
+    : Material(
       child: Container(
         color: Colors.white,
         child: Stack(
