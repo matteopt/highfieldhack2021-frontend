@@ -19,12 +19,14 @@ class _LeaderboardPageState extends State<LeaderboardPage> with AutomaticKeepAli
   double _parallax = 0;
   Map<String,int> _entries = Map<String,int>();
 
-  void refresh() async {
+  Future<void> refresh() async {
     http.Response response = await getLeaderBoards();
     print(response.body);
     setState(() {
       _entries = Map<String, int>.from(jsonDecode(response.body));
     });
+
+    return;
   }
 
   @override
@@ -69,7 +71,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> with AutomaticKeepAli
             ),
             RefreshIndicator(
               strokeWidth: 2.5,
-              onRefresh: () {  return Future<void>(null); },
+              onRefresh: () {  return refresh(); },
               child: CustomScrollView(
                 physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                 controller: _scrollController,
