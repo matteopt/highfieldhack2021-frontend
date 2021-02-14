@@ -6,27 +6,27 @@ import 'package:http/http.dart' as http;
 class CreateTaskPage extends StatefulWidget {
   @override
   _CreateTaskPageState createState() => _CreateTaskPageState();
+
+  CreateTaskPage({Key key, @required this.username});
+
+  final String username;
 }
 
 class _CreateTaskPageState extends State<CreateTaskPage> {
+  
   String _exercise = null;
+  
   List<String> _people = [];
-  List<Map<String, dynamic>> _friends = [
-    {
-    'id': 'sk3',
-    'name': 'Jeff',
-    'brand': '',
-    'category': 'Your Friends'
-  },
-  ];
+  
+  List<Map<String, dynamic>> _friends = [];
 
   List<S2Choice<String>> _exercises = [
-  S2Choice<String>(value: '1', title: 'Running'),
-  S2Choice<String>(value: '2', title: 'Cycling'),
-  S2Choice<String>(value: '3', title: 'Rope-skipping'),
-  S2Choice<String>(value: '4', title: 'Push-ups'),
-  S2Choice<String>(value: '5', title: 'Walk yourself'),
-];
+    S2Choice<String>(value: '1', title: 'Running'),
+    S2Choice<String>(value: '2', title: 'Cycling'),
+    S2Choice<String>(value: '3', title: 'Rope-skipping'),
+    S2Choice<String>(value: '4', title: 'Push-ups'),
+    S2Choice<String>(value: '5', title: 'Meditate'),
+  ];
 
 DateTime _selectedDate = DateTime.now();
 
@@ -45,6 +45,28 @@ Future<Null> _selectDate(BuildContext context) async {
 
   void _getFriends() async {
     http.Response response = await getFriends(widget.username);
+    List<String> t;
+    
+    if (response.body == '521' || response.body == '522') {
+      setState(() {
+        t = [];
+      });
+    } else {
+      setState(() {
+        t = response.body.split(" ");
+      });
+    }
+
+    t.forEach((u) {
+      _friends.add({
+        'id': u,
+        'name': u,
+        'brand': '',
+        'category': 'Your Friends',
+      });
+    });
+
+    setState(() {});
   }
 
   @override
@@ -72,7 +94,7 @@ Future<Null> _selectDate(BuildContext context) async {
               ),
             ),
           ),
-          SizedBox(height: 30,),
+          SizedBox(height: 10,),
           Container(
             child: SmartSelect<String>.single(
               title: 'Exercise type',
@@ -93,7 +115,7 @@ Future<Null> _selectDate(BuildContext context) async {
               },
             ),
           ),
-          SizedBox(height: 30,),
+          SizedBox(height: 10,),
           SmartSelect<String>.multiple(
             title: 'Friends',
             placeholder: 'Choose one or more',
@@ -122,9 +144,9 @@ Future<Null> _selectDate(BuildContext context) async {
               );
             },
           ),
-          SizedBox(height: 20,),
+          SizedBox(height: 10,),
           Padding(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -146,26 +168,6 @@ Future<Null> _selectDate(BuildContext context) async {
             ),
             
           ),
-          Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  Slider(
-    value: _currentSliderValue,
-    min: 0,
-    max: 100,
-    divisions: 5,
-    label: _currentSliderValue.round().toString(),
-    onChanged: (double value) {
-      setState(() {
-        _currentSliderValue = value;
-      });
-    },
-  );
-
-                ],
-              ),
-            )
         ],
       ),
     );

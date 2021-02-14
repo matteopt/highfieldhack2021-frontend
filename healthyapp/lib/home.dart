@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     
     List<Widget> _pages = [
-      ProgressPage(),
+      ProgressPage(username: widget.username),
       LeaderboardPage(username: widget.username),
       SocialPage(username: widget.username),
     ];

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:healthyapp/create_task.dart';
 
 enum TaskType {
   running,
@@ -175,6 +176,10 @@ class _TaskCardState extends State<TaskCard> {
 class ProgressPage extends StatefulWidget {
   @override
   _ProgressPageState createState() => _ProgressPageState();
+
+  ProgressPage({Key key, @required this.username});
+
+  final String username;
 }
 
 class _ProgressPageState extends State<ProgressPage> with AutomaticKeepAliveClientMixin<ProgressPage> {
@@ -210,87 +215,100 @@ class _ProgressPageState extends State<ProgressPage> with AutomaticKeepAliveClie
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      child: Stack(
-        children: [
-          Positioned(
-            top: _parallax,
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              child: Image.network('https://i.pinimg.com/originals/a1/03/3b/a1033bf9c3cc07acb5389cd1e44609a6.jpg', fit: BoxFit.cover, color: Colors.black.withOpacity(0.5), colorBlendMode: BlendMode.srcATop,),
-              height: _expandedHeight,
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        heroTag: "lol",
+        backgroundColor: Colors.blue,
+        child: Icon(Icons.add, size: 25,),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CreateTaskPage(username: widget.username))
+          );
+        },
+      ),
+      body: Container(
+        color: Colors.white,
+        child: Stack(
+          children: [
+            Positioned(
+              top: _parallax,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Image.network('https://i.pinimg.com/originals/a1/03/3b/a1033bf9c3cc07acb5389cd1e44609a6.jpg', fit: BoxFit.cover, color: Colors.black.withOpacity(0.5), colorBlendMode: BlendMode.srcATop,),
+                height: _expandedHeight,
+              ),
             ),
-          ),
-          RefreshIndicator(
-            strokeWidth: 2.5,
-            onRefresh: () {  return Future<void>(null); },
-            child: CustomScrollView(
-              physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-              controller: _scrollController,
-              slivers: <Widget>[
+            RefreshIndicator(
+              strokeWidth: 2.5,
+              onRefresh: () {  return Future<void>(null); },
+              child: CustomScrollView(
+                physics: BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                controller: _scrollController,
+                slivers: <Widget>[
 
-                SliverToBoxAdapter(
-                  child: Container(
-                    color: Colors.transparent,
-                    height: 250,
-                    padding: EdgeInsets.fromLTRB(20, 60, 20, 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          ' Your progress',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                  SliverToBoxAdapter(
+                    child: Container(
+                      color: Colors.transparent,
+                      height: 250,
+                      padding: EdgeInsets.fromLTRB(20, 60, 20, 20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            ' Your progress',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 10,),
-                        Expanded(
-                          child: Card(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
-                            elevation: 10,
-                            color: Colors.white,
-                            child: Padding(
-                              padding: EdgeInsets.fromLTRB(25,10,25,10),
-                              child: Row(
-                                children: [
-                                  CircleAvatar(
-                                    backgroundImage: NetworkImage('https://ourfunnylittlesite.com/wp-content/uploads/2018/07/1-4.jpg'),
-                                    radius: 40,
-                                  )
-                                ],
+                          SizedBox(height: 10,),
+                          Expanded(
+                            child: Card(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(15))),
+                              elevation: 10,
+                              color: Colors.white,
+                              child: Padding(
+                                padding: EdgeInsets.fromLTRB(25,10,25,10),
+                                child: Row(
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage: NetworkImage('https://ourfunnylittlesite.com/wp-content/uploads/2018/07/1-4.jpg'),
+                                      radius: 40,
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                SliverList(
-                  delegate: SliverChildBuilderDelegate((context, index) {
-                    return Container(
-                      color: Colors.white,
-                      child: Column(
-                        children: [
-                          TaskCard(
-                            type: index % 2 == 0 ? TaskType.running : TaskType.ropejumping,
-                            goal: 50,
-                            progress: 36.5,
-                          ),
-                          Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
                         ],
                       ),
-                    );
-                  }),
-                )
-              ]
+                    ),
+                  ),
+
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      return Container(
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            TaskCard(
+                              type: index % 2 == 0 ? TaskType.running : TaskType.ropejumping,
+                              goal: 50,
+                              progress: 36.5,
+                            ),
+                            Divider(indent: 40, endIndent: 40, height: 1, thickness: 1,),
+                          ],
+                        ),
+                      );
+                    }),
+                  )
+                ]
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
