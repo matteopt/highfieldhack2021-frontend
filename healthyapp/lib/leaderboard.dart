@@ -139,7 +139,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> with AutomaticKeepAli
                                               ),
                                             ),
                                             Text(
-                                              _entries.entries.elementAt(index).value.toString(),
+                                              _entries.entries.elementAt(index).value.toString() + " tasks completed",
                                               style: TextStyle(
                                                 color: Colors.black45
                                               )
