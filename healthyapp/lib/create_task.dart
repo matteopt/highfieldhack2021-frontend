@@ -16,7 +16,7 @@ class _CreateTaskPageState extends State<CreateTaskPage> {
   
   String _exercise = null;
 
-  double _currentSliderValue = 0;
+  double _currentSliderValue = 2;
 
   List<String> _people = [];
   
@@ -148,6 +148,34 @@ Future<Null> _selectDate(BuildContext context) async {
           ),
           SizedBox(height: 10,),
           Padding(
+            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Expanded(
+                  child: Slider(
+                    value: _currentSliderValue,
+                    min: 2,
+                    max: 50,
+                    label: _currentSliderValue.round().toString(),
+                    onChanged: (double value) {
+                      setState(() {
+                        _currentSliderValue = value;
+                      });
+                    },
+                  ),
+                ),
+                SizedBox(
+                  width: 60,
+                  child: Text(
+                    _currentSliderValue.round().toString() + " miles"
+                  ),
+                )
+              ],
+            ),
+          ),
+          Padding(
             padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -169,29 +197,31 @@ Future<Null> _selectDate(BuildContext context) async {
               ],
             ),
           ),
+
+          SizedBox(height: 20,),
+
           Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Expanded(
-                  child: Slider(
-                    value: _currentSliderValue,
-                    min: 0,
-                    max: 100,
-                    divisions: 5,
-                    label: _currentSliderValue.round().toString(),
-                    onChanged: (double value) {
-                      setState(() {
-                        _currentSliderValue = value;
-                      });
-                    },
+            padding: const EdgeInsets.only(left: 20, right: 20),
+            child: SizedBox(
+              width: double.infinity,
+              child: RaisedButton(
+                color: Colors.blue,
+                onPressed: () {},
+                elevation: 5,
+                child: Text(
+                  "CREATE",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                    color: Colors.white,
                   ),
                 ),
-              ],
+                padding: EdgeInsets.all(20),
+                shape: RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),
+              ),
             ),
-          ),
+          )
+          
         ],
       ),
     );
