@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:smart_select/smart_select.dart';
-
+import 'package:healthyapp/requests.dart';
+import 'package:http/http.dart' as http;
 
 class CreateTaskPage extends StatefulWidget {
   @override
@@ -40,6 +41,17 @@ Future<Null> _selectDate(BuildContext context) async {
       setState(() {
        _selectedDate = picked;
       });
+  }
+
+  void _getFriends() async {
+    http.Response response = await getFriends(widget.username);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _getFriends();
   }
 
   @override
