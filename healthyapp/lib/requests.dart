@@ -72,9 +72,9 @@ Future<http.Response> getFriendRequestsSent(String username) {
   );
 }
 
-Future<http.Response> getLeaderBoards() {
+Future<http.Response> getLeaderBoards(String username) {
   return http.get(
-    Uri.http(_ip, 'main/leaderboards/'),
+    Uri.http(_ip, 'main/leaderboards/' + username),
   );
 }
 

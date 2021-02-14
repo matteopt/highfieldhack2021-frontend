@@ -8,6 +8,10 @@ import 'package:http/http.dart' as http;
 class LeaderboardPage extends StatefulWidget {
   @override
   _LeaderboardPageState createState() => _LeaderboardPageState();
+
+  LeaderboardPage({Key key, @required this.username});
+
+  final String username;
 }
 
 class _LeaderboardPageState extends State<LeaderboardPage> with AutomaticKeepAliveClientMixin<LeaderboardPage> {
@@ -20,7 +24,7 @@ class _LeaderboardPageState extends State<LeaderboardPage> with AutomaticKeepAli
   Map<String,int> _entries = Map<String,int>();
 
   Future<void> refresh() async {
-    http.Response response = await getLeaderBoards();
+    http.Response response = await getLeaderBoards(widget.username);
     print(response.body);
     setState(() {
       _entries = Map<String, int>.from(jsonDecode(response.body));
