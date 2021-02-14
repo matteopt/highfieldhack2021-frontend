@@ -41,8 +41,8 @@ class _HomePageState extends State<HomePage> {
     
     List<Widget> _pages = [
       ProgressPage(),
-      SocialPage(username: widget.username,),
       LeaderboardPage(),
+      SocialPage(username: widget.username,),
     ];
 
     return Scaffold(
